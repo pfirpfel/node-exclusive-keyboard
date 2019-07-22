@@ -1,0 +1,28 @@
+{
+  "name": "exclusive-keyboard",
+  "version": "0.0.1",
+  "description": "Keylogger for NodeJS and Linux that grabs the input device exclusively",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "keylogger",
+    "linux",
+    "EVIOCGRAB"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pfirpfel/node-exclusive-keyboard.git"
+  },
+  "author": "Michael Kuenzli <michaelkuenzli@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pfirpfel/node-exclusive-keyboard/issues"
+  },
+  "homepage": "https://github.com/pfirpfel/node-exclusive-keyboard#readme",
+  "dependencies": {
+    "bindings": "^1.5.0",
+    "nan": "^2.14.0"
+  }
+}
