@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports.keycodes = {
+module.exports = {
   '1': 'KEY_ESC',
   '2': 'KEY_1',
   '3': 'KEY_2',

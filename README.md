@@ -18,7 +18,7 @@ sudo setfacl -m u:username:r /dev/input/by-id/usb-Logitech_Logitech_USB_Keyboard
 ```
 
 ```js
-const ExclusiveKeyboard = require('node-exclusive-keyboard');
+const ExclusiveKeyboard = require('exclusive-keyboard');
 
 const keyboard = new ExclusiveKeyboard('by-id/usb-Logitech_Logitech_USB_Keyboard-event-kbd');
 keyboard.on('keyup', console.log);
