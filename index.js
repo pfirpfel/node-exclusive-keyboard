@@ -76,3 +76,5 @@ module.exports = class ExclusiveKeyboard extends EventEmitter {
     this.fd = undefined;
   }
 }
+
+module.exports.Keys = keycodes;
