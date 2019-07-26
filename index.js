@@ -23,53 +23,57 @@ const parse = (input, buffer) => {
 };
 
 module.exports = class ExclusiveKeyboard extends EventEmitter {
-  constructor(dev) {
+  /**
+   * @param dev Device name (part after '/dev/input/'). Example: 'event0' would use '/dev/input/event0'
+   * @param exclusive Grab device exclusively using ioctl EVIOCGRAB (default: true)
+   */
+  constructor(dev, exclusive) {
     super();
     if (dev === undefined) {
       throw new Error('Device is not defined.');
     }
     this.dev = dev;
+    this.exclusive = exclusive !== false; // true if undefined
     this.bufferSize = 24;
-    this.buffer = new Buffer(this.bufferSize);
+    this.buffer = Buffer.alloc(this.bufferSize);
     this.data = fs.createReadStream('/dev/input/' + this.dev);
 
-    this.data.on('open', this.onOpen.bind(this));
-    this.data.on('data', this.onData.bind(this));
-    this.data.on('error', this.onError.bind(this));
+    const onOpen = (fd) => {
+      this.fd = fd;
+      if (this.exclusive) {
+        // exclusively grab device
+        ioctl(this.fd, 1);
+      }
+    };
+
+    const onData = (data) => {
+      this.buffer = data.slice(24);
+      const event = parse(this, this.buffer);
+      if (event) {
+        event.dev = this.dev;
+        this.emit(event.type, event);
+      }
+    };
+
+    const onError = (error) => {
+      this.emit('error', error);
+      throw new Error(error);
+    };
+
+    this.data.on('open', onOpen);
+    this.data.on('data', onData);
+    this.data.on('error', onError);
   }
 
-  onOpen(fd) {
-    this.fd = fd;
-    // exclusively grab device
-    ioctl(this.fd, 1);
-  }
-
-  onData(data) {
-    this.buffer = data.slice(24);
-    var event = parse(this, this.buffer);
-    if (event) {
-      event.dev = this.dev;
-      this.emit(event.type, event);
-    }
-  }
-
-  onRead(bytesRead) {
-    var event = parse(this, this.buf);
-    if( event ) {
-      event.dev = this.dev;
-      this.emit(event.type, event);
-    }
-    if (this.fd) this.startRead();
-  }
-
-  onError(error) {
-    this.emit('error', error);
-    throw new Error(error);
-  }
-
+  /**
+   * Releases the grabbed device and closes the file descriptor.
+   * Emits 'close' event when done.
+   */
   close() {
-    // release device
-    ioctl(this.fd, 0);
+    if (this.exclusive) {
+      // release device
+      ioctl(this.fd, 0);
+    }
     fs.close(this.fd, () => {
       this.emit('close', this);
     });
