@@ -1,8 +1,8 @@
 {
     'targets': [
         {
-            'target_name': 'ioctl',
-            'sources': [ 'lib/ioctl.cpp' ],
+            'target_name': 'eviocgrab',
+            'sources': [ 'lib/eviocgrab.cpp' ],
             'include_dirs': [
                 '<!(node -e "require(\'nan\')")'
             ]

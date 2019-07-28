@@ -2,7 +2,7 @@
 
 const fs = require('fs');
 const EventEmitter = require('events').EventEmitter;
-const ioctl = require('bindings')('ioctl.node').ioctl;
+const eviocgrab = require('bindings')('eviocgrab.node').eviocgrab;
 
 const keycodes = require('./keyscodes');
 const EV_KEY = 1;
@@ -42,7 +42,7 @@ module.exports = class ExclusiveKeyboard extends EventEmitter {
       this.fd = fd;
       if (this.exclusive) {
         // exclusively grab device
-        ioctl(this.fd, 1);
+        eviocgrab(this.fd, 1);
       }
     };
 
@@ -72,7 +72,7 @@ module.exports = class ExclusiveKeyboard extends EventEmitter {
   close() {
     if (this.exclusive) {
       // release device
-      ioctl(this.fd, 0);
+      eviocgrab(this.fd, 0);
     }
     fs.close(this.fd, () => {
       this.emit('close', this);

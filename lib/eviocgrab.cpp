@@ -6,7 +6,7 @@
 using namespace v8;
 using namespace node;
 
-NAN_METHOD(Ioctl) {
+NAN_METHOD(Eviocgrab) {
     Nan::HandleScope scope;
 
     Local<Object> buf;
@@ -35,8 +35,8 @@ NAN_METHOD(Ioctl) {
 
 void InitAll(Local<Object> exports) {
     Nan::Set(exports,
-             Nan::New("ioctl").ToLocalChecked(),
-             Nan::GetFunction(Nan::New<FunctionTemplate>(Ioctl)).ToLocalChecked());
+             Nan::New("eviocgrab").ToLocalChecked(),
+             Nan::GetFunction(Nan::New<FunctionTemplate>(Eviocgrab)).ToLocalChecked());
 }
 
-NODE_MODULE(ioctl, InitAll)
+NODE_MODULE(eviocgrab, InitAll)
