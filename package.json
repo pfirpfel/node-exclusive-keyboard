@@ -1,6 +1,6 @@
 {
   "name": "exclusive-keyboard",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "description": "Keylogger for NodeJS and Linux that grabs the input device exclusively",
   "main": "index.js",
   "scripts": {
