@@ -1,26 +1,29 @@
 'use strict';
 
 const fs = require('fs');
+const arch = require('arch');
 const EventEmitter = require('events').EventEmitter;
 const eviocgrab = require('bindings')('eviocgrab.node').eviocgrab;
 
 const keycodes = require('./keyscodes');
 const EV_KEY = 1;
-const EVENT_TYPES = ['keyup','keypress','keydown'];
+const EVENT_TYPES = ['keyup', 'keypress', 'keydown'];
+const is64bit = arch() === 'x64';
 
 const parse = (input, buffer) => {
+  const timestampLen = is64bit ? 16 : 8;
   let event = undefined;
-  if (buffer.readUInt16LE(16) === EV_KEY) {
+  if (buffer.readUInt16LE(timestampLen) === EV_KEY) {
     event = {
       timeS: buffer.readUInt16LE(0),
-      timeMS: buffer.readUInt16LE(8),
-      keyCode: buffer.readUInt16LE(18)
+      timeMS: buffer.readUInt16LE(timestampLen / 2),
+      keyCode: buffer.readUInt16LE(timestampLen + 2)
     };
     event.keyId = keycodes[event.keyCode];
-    event.type = EVENT_TYPES[buffer.readUInt32LE(20)];
+    event.type = EVENT_TYPES[buffer.readUInt32LE(timestampLen + 4)];
   }
   return event;
-};
+}
 
 module.exports = class ExclusiveKeyboard extends EventEmitter {
   /**
@@ -34,7 +37,7 @@ module.exports = class ExclusiveKeyboard extends EventEmitter {
     }
     this.dev = dev;
     this.exclusive = exclusive !== false; // true if undefined
-    this.bufferSize = 24;
+    this.bufferSize = is64bit ? 24 : 16;
     this.buffer = Buffer.alloc(this.bufferSize);
     this.data = fs.createReadStream('/dev/input/' + this.dev);
 
@@ -47,7 +50,7 @@ module.exports = class ExclusiveKeyboard extends EventEmitter {
     };
 
     const onData = (data) => {
-      this.buffer = data.slice(24);
+      this.buffer = data.slice(is64bit ? 24 : 16);
       const event = parse(this, this.buffer);
       if (event) {
         event.dev = this.dev;
