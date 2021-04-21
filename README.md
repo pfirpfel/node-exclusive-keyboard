@@ -81,3 +81,8 @@ Example event:
 ### Event `error(error)`
 
 ### Event `close()`
+
+## Contributors
+Thank you to the following contributors:
+
+* [Janek Thomaschewski](https://github.com/jthomaschewski)
