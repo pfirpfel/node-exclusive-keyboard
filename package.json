@@ -22,6 +22,7 @@
   },
   "homepage": "https://github.com/pfirpfel/node-exclusive-keyboard#readme",
   "dependencies": {
+    "arch": "^2.1.1",
     "bindings": "^1.5.0",
     "nan": "^2.14.0"
   }
