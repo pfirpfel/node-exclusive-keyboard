@@ -81,6 +81,8 @@ module.exports = class ExclusiveKeyboard extends EventEmitter {
       this.emit('close', this);
     });
     this.fd = undefined;
+    // close the read stream
+    this.data.destroy();
   }
 }
 
